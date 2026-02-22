@@ -1,0 +1,20 @@
+# 🐳 FRONTEND DOCKERFILE EXPLANATION:
+# This file tells Docker how to serve your frontend with Nginx
+
+# Step 1: Use Nginx as the base image
+# Nginx is a web server that will serve your HTML/CSS/JS files
+FROM nginx:alpine
+
+# Step 2: Copy frontend files to Nginx's web directory
+# Everything in /frontend goes to /usr/share/nginx/html
+COPY frontend/ /usr/share/nginx/html/
+
+# Step 3: Copy custom Nginx configuration
+# This tells Nginx how to handle requests
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Step 4: Expose port 80
+# Frontend will be accessible on port 80
+EXPOSE 80
+
+# Nginx starts automatically, no CMD needed

@@ -1,0 +1,28 @@
+# Docker ignore file
+# Tells Docker which files NOT to copy into containers
+
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# Git
+.git/
+.gitignore
+
+# Node modules (if any)
+node_modules/

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Court Booking System - Available Courts</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container">
+        <div class="nav-brand">
+          <h1>🎾 Court Booking</h1>
+        </div>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html" class="active">Courts</a></li>
+          <!-- Dynamic menu items will be inserted here -->
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <h2>Book Your Court Today</h2>
+        <p>Choose from our premium sports facilities</p>
+      </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filters">
+      <div class="container">
+        <button class="filter-btn active" data-type="all">All Courts</button>
+        <button class="filter-btn" data-type="BADMINTON">🏸 Badminton</button>
+        <button class="filter-btn" data-type="TENNIS">🎾 Tennis</button>
+        <button class="filter-btn" data-type="BASKETBALL">🏀 Basketball</button>
+      </div>
+    </section>
+
+    <!-- Courts Grid -->
+    <section class="courts-section">
+      <div class="container">
+        <div id="loading" class="loading">
+          <div class="spinner"></div>
+          <p>Loading courts...</p>
+        </div>
+        <div id="error" class="error-message" style="display: none"></div>
+        <div id="courts-grid" class="courts-grid"></div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p>
+          &copy; 2026 Court Booking System. Built with Spring Boot & Vanilla JS.
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/courts.js"></script>
+  </body>
+</html>

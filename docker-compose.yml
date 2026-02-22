@@ -1,0 +1,68 @@
+# 🐳 DOCKER COMPOSE EXPLANATION:
+# This file orchestrates all containers (backend, frontend, database)
+# One command to run everything: docker-compose up
+
+services:
+  # 📦 MySQL Database Container
+  database:
+    image: mysql:8.0
+    container_name: court-booking-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: court_booking_db
+      MYSQL_USER: courtuser
+      MYSQL_PASSWORD: courtpass
+    ports:
+      - "3307:3306" # Map to 3307 to avoid conflict with local MySQL
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - court-booking-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 🚀 Spring Boot Backend Container
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: court-booking-backend
+    ports:
+      - "8080:8080"
+    environment:
+      # Database connection settings
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/court_booking_db
+      SPRING_DATASOURCE_USERNAME: courtuser
+      SPRING_DATASOURCE_PASSWORD: courtpass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - court-booking-network
+
+  # 🌐 Frontend Container (Nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: court-booking-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - court-booking-network
+
+# 📁 Volumes (persistent storage for database)
+volumes:
+  mysql_data:
+
+# 🌐 Networks (allows containers to communicate)
+networks:
+  court-booking-network:
+    driver: bridge

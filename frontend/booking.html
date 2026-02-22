@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Court - Court Booking System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>🎾 Court Booking</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Courts</a></li>
+                <li><a href="my-bookings.html">My Bookings</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Booking Form Section -->
+    <section class="booking-section">
+        <div class="container">
+            <div class="booking-card">
+                <h2>📅 Book a Court</h2>
+                <p class="subtitle">Fill in the details below to reserve your court</p>
+
+                <form id="booking-form">
+                    <!-- User ID (temporary - in real app, this would be from login) -->
+                    <div class="form-group">
+                        <label for="userId">User ID</label>
+                        <input type="number" id="userId" name="userId" value="1" required>
+                        <small>For demo purposes. In production, this comes from authentication.</small>
+                    </div>
+
+                    <!-- Court Selection -->
+                    <div class="form-group">
+                        <label for="courtId">Select Court *</label>
+                        <select id="courtId" name="courtId" required>
+                            <option value="">-- Choose a court --</option>
+                        </select>
+                    </div>
+
+                    <!-- Date Selection -->
+                    <div class="form-group">
+                        <label for="bookingDate">Booking Date *</label>
+                        <input type="date" id="bookingDate" name="bookingDate" required>
+                    </div>
+
+                    <!-- Time Selection -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startTime">Start Time *</label>
+                            <input type="time" id="startTime" name="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endTime">End Time *</label>
+                            <input type="time" id="endTime" name="endTime" required>
+                        </div>
+                    </div>
+
+                    <!-- Price Preview -->
+                    <div class="price-preview" id="pricePreview" style="display: none;">
+                        <div class="price-details">
+                            <span>Duration:</span>
+                            <span id="duration">-</span>
+                        </div>
+                        <div class="price-details">
+                            <span>Hourly Rate:</span>
+                            <span id="hourlyRate">-</span>
+                        </div>
+                        <div class="price-total">
+                            <span>Total Price:</span>
+                            <span id="totalPrice">RM 0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="error" class="error-message" style="display: none;"></div>
+
+                    <!-- Success Message -->
+                    <div id="success" class="success-message" style="display: none;"></div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span id="btnText">Book Now</span>
+                        <span id="btnLoading" class="spinner-small" style="display: none;"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Court Booking System. Built with Spring Boot & Vanilla JS.</p>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+</body>
+</html>
