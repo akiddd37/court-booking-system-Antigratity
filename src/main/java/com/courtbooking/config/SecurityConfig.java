@@ -2,6 +2,7 @@ package com.courtbooking.config;
 
 import com.courtbooking.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,17 +19,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-/**
- * Spring Security Configuration
- * 
- * Configures:
- * - JWT authentication filter
- * - Password encoding (BCrypt)
- * - Endpoint security rules
- * - CORS settings
- * - Session management (stateless)
- */
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -38,47 +35,52 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
-    /**
-     * Configure security filter chain
-     */
+    // Set ALLOWED_ORIGINS env variable in Railway to your frontend URL
+    // e.g. "https://happy-art-production-4f1b.up.railway.app"
+    @Value("${ALLOWED_ORIGINS:http://localhost,http://localhost:80,http://localhost:8080,http://127.0.0.1}")
+    private String allowedOrigins;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF (not needed for stateless JWT)
                 .csrf(AbstractHttpConfigurer::disable)
-
-                // Configure authorization rules
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints (no authentication required)
                         .requestMatchers(
-                                "/api/auth/**", // Login, register
-                                "/api/courts", // View courts (GET only)
-                                "/api/courts/{id}", // View single court
-                                "/api/courts/type/**", // Filter courts by type
-                                "/swagger-ui/**", // Swagger UI
-                                "/v3/api-docs/**", // OpenAPI docs
-                                "/api-docs/**" // API docs
-                        ).permitAll()
-
-                        // All other endpoints require authentication
+                                "/api/auth/**",
+                                "/api/courts",
+                                "/api/courts/{id}",
+                                "/api/courts/type/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api-docs/**")
+                        .permitAll()
                         .anyRequest().authenticated())
-
-                // Set session management to stateless (no sessions, use JWT)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // Set authentication provider
                 .authenticationProvider(authenticationProvider())
-
-                // Add JWT filter before UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    /**
-     * Configure authentication provider
-     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // Parse comma-separated origins from environment variable
+        List<String> origins = Arrays.asList(allowedOrigins.split(","));
+        configuration.setAllowedOrigins(origins);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -87,17 +89,11 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    /**
-     * Configure authentication manager
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * Configure password encoder (BCrypt)
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
