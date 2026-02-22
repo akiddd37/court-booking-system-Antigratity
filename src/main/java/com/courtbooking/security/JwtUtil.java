@@ -142,7 +142,15 @@ public class JwtUtil {
      * @return signing key
      */
     private javax.crypto.SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        // Use raw bytes from the secret string - works with any string (not Base64
+        // only)
+        byte[] keyBytes = secretKey.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        // Ensure key is at least 256 bits (32 bytes) for HS256
+        if (keyBytes.length < 32) {
+            byte[] paddedKey = new byte[32];
+            System.arraycopy(keyBytes, 0, paddedKey, 0, keyBytes.length);
+            return Keys.hmacShaKeyFor(paddedKey);
+        }
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
